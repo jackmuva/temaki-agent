@@ -1,9 +1,9 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { v4 } from 'uuid';
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { randomUUID } from 'crypto';
 
 export const executionTable = sqliteTable("execution_table", {
-	id: text().primaryKey().$defaultFn(() => v4()),
+	id: text().primaryKey().$defaultFn(() => randomUUID()),
 	executionId: text().notNull(),
 	data: text({ mode: 'json' }).notNull(),
 	step: text().notNull(),
