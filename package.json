@@ -14,8 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ai": "^5.0.92",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",

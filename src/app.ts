@@ -1,5 +1,5 @@
 import express from 'express';
-import agentRouter from './routes/agent-routes';
+import agentRouter from './controllers/agent-controller';
 import { errorHandler } from './middleware/error-handler';
 
 const app = express();
