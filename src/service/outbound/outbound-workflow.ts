@@ -3,7 +3,7 @@ import { localDb } from "../../repository/local-repo";
 import { batchInsertExecutions, deleteExecutionsById, getExecutionsById, insertExecution } from "../../repository/unified-repo";
 import { randomUUID } from 'crypto';
 import firecrawl from "../firecrawl";
-import { Document, ExtractResponse, SearchData } from "@mendable/firecrawl-js";
+import { Document, ExtractResponse, SearchData, SearchResultWeb } from "@mendable/firecrawl-js";
 import { generateObject, generateText } from "ai";
 import * as z from "zod";
 import { tursoDb } from "../../repository/turso-repo";
@@ -107,8 +107,8 @@ const determineFit = async (execId: string, searchData: SearchData, company: str
 
 	while (!isFit && (numResource < searchData.web.length && numResource < 4)) {
 		const result = searchData.web[numResource];
-		if (result && typeof result === 'object' && 'markdown' in result) {
-			context = (result as Document).markdown;
+		if (result && typeof result === 'object' && 'description' in result) {
+			context = (result as SearchResultWeb).description;
 			const verdict = await generateObject({
 				model: 'gpt-5-mini',
 				schema: z.object({
@@ -151,7 +151,7 @@ const parseEmail = async (execId: string, email: string): Promise<{ company: str
 
 const searchCompany = async (execId: string, company: string): Promise<SearchData | undefined> => {
 	if (company === "") return;
-	const searchData: SearchData = await firecrawl.search(company, {
+	const searchData: SearchData = await firecrawl.search(company + " integrations", {
 		sources: ['web'],
 		limit: 10,
 		timeout: 10000,
