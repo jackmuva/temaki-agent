@@ -1,12 +1,12 @@
 import express from 'express';
-import agentRouter from './controllers/agent-controller';
 import { errorHandler } from './middleware/error-handler';
+import outboundAgentRouter from './controllers/agent-controller';
 
 const app = express();
 
 app.use(express.json());
 
-app.use('/api/agent', agentRouter);
+app.use('/api/agent/outbound', outboundAgentRouter);
 
 app.use(errorHandler);
 

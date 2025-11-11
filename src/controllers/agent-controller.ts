@@ -1,15 +1,16 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { PromptInput, PromptInputSchema } from '../models/workflow-models';
+import { OutboundTrigger, OutboundTriggerSchema } from '../models/workflow-models';
 import config from '../config/config';
+import { triggerOutboundWorkflow } from '../service/outbound/outbound-workflow';
 
-export const testAgent = async (res: Response) => {
+export const testOutboundAgent = async (res: Response) => {
 	const request = await fetch(`${config.baseUrl}/${config.port}/api/agent/trigger`, {
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			prompt: "hi",
+			email: "jack@postman.com",
 		}),
 	});
 
@@ -17,19 +18,19 @@ export const testAgent = async (res: Response) => {
 	res.status(200).json(response);
 }
 
-export const triggerAgent = (req: Request, res: Response, next: NextFunction) => {
+export const triggerOutboundAgent = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		console.log(req.body);
-		const promptInput: PromptInput = PromptInputSchema.parse(req.body);
-		res.status(201).json(promptInput);
+		const trigger: OutboundTrigger = OutboundTriggerSchema.parse(req.body);
+		await triggerOutboundWorkflow(trigger);
+		res.status(201).json({ message: "processing" });
 	} catch (error) {
 		next(error);
 	}
 }
 
-const agentRouter = Router();
+const outboundAgentRouter = Router();
 
-agentRouter.post('/trigger', triggerAgent);
-agentRouter.get('/test', testAgent);
+outboundAgentRouter.post('/trigger', triggerOutboundAgent);
+outboundAgentRouter.get('/test', testOutboundAgent);
 
-export default agentRouter;
+export default outboundAgentRouter;
