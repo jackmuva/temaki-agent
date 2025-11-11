@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1762849521540,
+      "tag": "0000_left_jackpot",
+      "breakpoints": true
+    }
+  ]
+}

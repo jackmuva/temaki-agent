@@ -8,24 +8,31 @@
     "start": "node dist/server.js",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
     "lint": "eslint 'src/**/*.ts'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "npx drizzle-kit generate --config=drizzle-local.config.ts && npx drizzle-kit generate --config=drizzle-turso.config.ts",
+    "migrate": "npx drizzle-kit migrate --config=drizzle-local.config.ts && npx drizzle-kit migrate --config=drizzle-turso.config.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "ai": "^5.0.92",
     "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.7",
     "express": "^5.1.0",
+    "uuid": "^13.0.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.0",
+    "drizzle-kit": "^0.31.6",
     "eslint": "^9.39.1",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
