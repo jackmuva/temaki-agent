@@ -33,7 +33,7 @@ export const deleteExecutionsById = async (
 	try {
 		await db.delete(executionTable).where(eq(executionTable.executionId, execId));
 	} catch (e) {
-		console.error("[Get All Executions]: ", e);
+		console.error("[Delete Executions]: ", e);
 	}
 }
 

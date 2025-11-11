@@ -4,7 +4,7 @@ import config from '../config/config';
 import { triggerOutboundWorkflow } from '../service/outbound/outbound-workflow';
 
 export const testOutboundAgent = async (res: Response) => {
-	const request = await fetch(`${config.baseUrl}/${config.port}/api/agent/trigger`, {
+	const request = await fetch(`${config.baseUrl}:${config.port}/api/agent/outbound/trigger`, {
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json',

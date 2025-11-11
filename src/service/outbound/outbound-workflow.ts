@@ -30,19 +30,22 @@ Be friendly, and offer to set up a call if they're interested`;
 
 export const triggerOutboundWorkflow = async (trigger: OutboundTrigger): Promise<string> => {
 	const execId: string = randomUUID();
+
 	const companyInfo: { company: string, website: string } = await parseEmail(execId, trigger.email);
+	console.log("[COMPANY INFO] ", companyInfo);
+
 	const extractData: ExtractResponse | undefined = await crawlUrl(execId, companyInfo.website, companyInfo.company);
+	console.log("[EXTRACTED DATA] ", extractData);
+
 	let searchData: SearchData | undefined;
-	let finalResult: string;
+	let finalResult: string = "undefined";
 
 	if (extractData && extractData.success) {
 		if (extractData.data) {
 			//@ts-ignore
 			const extracted: {
 				largerThanTenEmployees: boolean,
-				funding: number,
 				isB2B: boolean,
-				companyDescription: string,
 			} = extractData.data;
 			if (extracted.isB2B && extracted.largerThanTenEmployees) {
 				searchData = await searchCompany(execId, companyInfo.company);
@@ -54,10 +57,13 @@ export const triggerOutboundWorkflow = async (trigger: OutboundTrigger): Promise
 		searchData = await searchCompany(execId, companyInfo.company);
 	}
 
+	console.log("[SEARCH DATA] ", searchData);
 	if (searchData) {
 		const fit: { isFit: boolean, context: string | undefined } | undefined = await determineFit(execId, searchData, companyInfo.company);
+		console.log("[FIT] ", fit);
 		if (fit && fit.isFit && fit.context) {
 			finalResult = await writeOutbound(execId, companyInfo.company, fit.context);
+			console.log("[OUTBOUND] ", finalResult);
 		} else {
 			finalResult = "Not a good fit";
 		}
@@ -148,6 +154,7 @@ const searchCompany = async (execId: string, company: string): Promise<SearchDat
 	const searchData: SearchData = await firecrawl.search(company, {
 		sources: ['web'],
 		limit: 10,
+		timeout: 10000,
 	});
 	await insertExecution(localDb, {
 		executionId: execId,
@@ -163,10 +170,9 @@ const crawlUrl = async (execId: string, website: string, company: string): Promi
 		type: 'object',
 		properties: {
 			largerThanTenEmployees: { type: 'boolean' },
-			funding: { type: 'number' },
 			isB2B: { type: 'boolean' },
 		},
-		required: ['isB2B', 'funding', 'largerThanTenEmployees']
+		required: ['isB2B', 'largerThanTenEmployees']
 	};
 
 	const res: ExtractResponse = await firecrawl.extract({
@@ -175,6 +181,7 @@ const crawlUrl = async (execId: string, website: string, company: string): Promi
 		schema,
 		scrapeOptions: { formats: [{ type: 'json', prompt: `Extract info about ${company}`, schema }] },
 		enableWebSearch: true,
+		timeout: 10000,
 	});
 	await insertExecution(localDb, {
 		executionId: execId,
